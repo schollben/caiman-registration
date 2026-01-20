@@ -1,0 +1,5 @@
+{
+    "python.defaultInterpreterPath": "${env:HOME}/miniconda3/envs/caiman/bin/python",
+    "python.terminal.activateEnvironment": true,
+    "python.terminal.activateEnvInCurrentTerminal": true
+}
