@@ -4,6 +4,7 @@ import tifffile
 import numpy as np
 import h5py
 from tqdm import tqdm
+
 def tif_stacks_to_h5(tif_dir, h5_savename, h5_key='mov', delete_tiffs=False, frame_offset=True, offset=30):
     '''
     Convert .tif stacks from BRUKER/SCANIMAGE to monolithic .h5 files.
