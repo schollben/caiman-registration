@@ -32,7 +32,7 @@ def register_one_session(parent_dir, mc_dict, keep_memmap, save_sample, sample_n
 
     opts = params.CNMFParams(params_dict=mc_dict)
 
-# %% start a cluster for parallel processing
+# start a cluster for parallel processing
     c, dview, n_processes = cm.cluster.setup_cluster(
         backend='local', n_processes=None, single_thread=False)
     mc = MotionCorrect(fnames, dview=dview, **opts.get_group('motion'))

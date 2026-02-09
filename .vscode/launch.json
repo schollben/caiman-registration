@@ -1,0 +1,56 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Registration GUI",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/image_registration.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "python": "${command:python.interpreterPath}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            }
+        },
+        {
+            "name": "Registration CLI (current folder)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/image_registration.py",
+            "args": [
+                "${input:folderPath}"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "python": "${command:python.interpreterPath}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            }
+        },
+        {
+            "name": "Registration CLI (non-rigid)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/image_registration.py",
+            "args": [
+                "${input:folderPath}",
+                "--nonrigid"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "python": "${command:python.interpreterPath}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            }
+        }
+    ],
+    "inputs": [
+        {
+            "id": "folderPath",
+            "type": "promptString",
+            "description": "Enter the path to the folder containing TIF stacks:",
+            "default": ""
+        }
+    ]
+}
