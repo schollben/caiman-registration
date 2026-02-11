@@ -128,20 +128,23 @@ def register_bulk(sessions_to_run, process_selections):
         'niter_rig': 5
     }
 
-    time_deltas = []
     for i in range(0,len(sessions_to_run)):
+
         print(sessions_to_run[i])
         n_procs = 0
-        t_start = datetime.now()
+
         if process_selections[0,i]:
             h5_name = os.path.join(sessions_to_run[i], 'unregistered.h5')
-            tif_stacks_to_h5(sessions_to_run[i], h5_name)
+            tif_stacks_to_h5(sessions_to_run[i], h5_name, frame_offset=False)
+        
         if process_selections[1,i]:
             n_procs +=1
             register_one_session(sessions_to_run[i], mc_dict, keep_memmap=False,save_sample=True, sample_name=f"{n_procs:02}_rigid.tif")
+        
         if process_selections[2,i]:
             register_one_session(sessions_to_run[i], mc_dict, keep_memmap=False,save_sample=True, sample_name=f"{n_procs:02}_rigid.tif")
             n_procs+=1
+        
         if process_selections[3,i]:
             mc_dict['pw_rigid'] = True
             register_one_session(sessions_to_run[i], mc_dict, keep_memmap=False, save_sample=True, sample_name=f"{n_procs:02}_nonrigid.tif")

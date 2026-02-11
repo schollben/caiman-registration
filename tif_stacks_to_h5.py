@@ -5,7 +5,7 @@ import numpy as np
 import h5py
 from tqdm import tqdm
 
-def tif_stacks_to_h5(tif_dir, h5_savename, h5_key='mov', delete_tiffs=False, frame_offset=True, offset=30):
+def tif_stacks_to_h5(tif_dir, h5_savename, h5_key='mov', delete_tiffs=False, frame_offset=False, offset=30):
     '''
     Convert .tif stacks from BRUKER/SCANIMAGE to monolithic .h5 files.
     If frame_offset, frames from the start and end of the series are appended to either
@@ -17,7 +17,8 @@ def tif_stacks_to_h5(tif_dir, h5_savename, h5_key='mov', delete_tiffs=False, fra
             h5_savename (str): Name of conversion .h5 file to save.
             h5_key (str): h5 key to save data under. CaImAn assumes 'mov'.
             delete_tiffs (bool): Whether to remove .tif files during conversion
-            frame_offset (int): 
+            frame_offset (bool): Whether to add frame offsets at beginning and end
+            offset (int): how many frames to add at beginning and end if frame_offset is True
         Returns:
             None - Writes .h5 file to disk at 'h5_savename' containing calcium movie data.
     '''
