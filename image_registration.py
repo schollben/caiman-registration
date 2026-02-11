@@ -78,14 +78,10 @@ def register_one_session(parent_dir, mc_dict, keep_memmap, save_sample, sample_n
             os.remove(fnames_new[i])
 
     if save_sample:
-        # if not os.path.isdir(os.path.join(parent_dir, "samples")):
-        #     os.makedirs(os.path.join(parent_dir, "samples"))
-        #with tifffile.TiffWriter(parent_dir+"//samples//"+sample_name, bigtiff=False, imagej=False) as tif:
-        # with tifffile.TiffWriter(os.path.join(parent_dir, 'samples', sample_name), bigtiff=False, imagej=False) as tif:
         with tifffile.TiffWriter(os.path.join(parent_dir, sample_name), bigtiff=False, imagej=False) as tif:
             for i in range(0, min(4000, numframes)):
                 curfr = datafile["mov"][i,:,:].astype(np.int16)
-                tif.save(curfr)
+                tif.write(curfr)
                 
     datafile.close()
 
