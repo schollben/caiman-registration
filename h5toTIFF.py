@@ -5,7 +5,7 @@ import os
 import glob
 import sys
 
-def h5_to_tiff(h5_path, max_frames=None, chunk_size=10000):
+def h5_to_tiff(h5_path, max_frames=None, chunk_size=10000, output_dir=None):
     """
     Convert H5 file to TIFF stacks in chunks using the same method as image_registration.py
 
@@ -13,6 +13,7 @@ def h5_to_tiff(h5_path, max_frames=None, chunk_size=10000):
         h5_path (str): Path to the H5 file
         max_frames (int): Maximum number of frames to save (default: all frames)
         chunk_size (int): Number of frames per TIFF stack (default: 10000)
+        output_dir (str): Directory to save TIFFs (default: same dir as h5 file)
     """
     if not os.path.exists(h5_path):
         print(f"Error: File not found: {h5_path}")
@@ -22,6 +23,9 @@ def h5_to_tiff(h5_path, max_frames=None, chunk_size=10000):
     base_dir = os.path.dirname(h5_path)
     base_name = os.path.basename(h5_path)
     base_name = base_name.replace('.h5', '').replace('.hdf5', '')
+
+    save_dir = output_dir if output_dir else base_dir
+    os.makedirs(save_dir, exist_ok=True)
 
     print(f"Converting {h5_path} to TIFF stacks (chunks of {chunk_size} frames)")
 
@@ -50,7 +54,7 @@ def h5_to_tiff(h5_path, max_frames=None, chunk_size=10000):
             chunk_frames = end_frame - start_frame
 
             # Create output filename with chunk number
-            chunk_output = os.path.join(base_dir, f"{base_name}_{chunk_idx+1:02d}.tif")
+            chunk_output = os.path.join(save_dir, f"{base_name}_{chunk_idx+1:02d}.tif")
 
             print(f"\nChunk {chunk_idx+1}/{num_chunks}: Saving frames {start_frame} to {end_frame-1} to {chunk_output}")
 

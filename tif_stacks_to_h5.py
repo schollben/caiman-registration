@@ -80,31 +80,35 @@ def tif_stacks_to_h5(tif_dir, h5_savename, h5_key='mov', delete_tiffs=False, fra
         last_stack = tifffile.imread(tif_fnames[-1])
         last_stack_length = last_stack.shape[0]
 
-    # first and last offset, all regular-length stacks, last stack
-    out_data_frames = (offset * 2) + (stack_depth * (len(tif_fnames) - 1)) + last_stack_length
-    # Writing the main movie itself
-    # multi-frame tif size consistency check
+    # Calculate total output frames
+    if frame_offset:
+        out_data_frames = (offset * 2) + (stack_depth * (len(tif_fnames) - 1)) + last_stack_length
+    else:
+        out_data_frames = (stack_depth * (len(tif_fnames) - 1)) + last_stack_length
+
     f_out = h5py.File(h5_savename, 'w')
     f_out.create_dataset(h5_key, (out_data_frames, stack_width, stack_height))
     write_start_ind, write_end_ind = (0, 0)
 
     if frame_offset:
         f_out[h5_key][0:offset, :, :] = np.flip(first_frames, axis=0)
-        write_end_ind += 30
-    
+        write_end_ind += offset
+
     for i in tqdm(range(len(tif_fnames) - 1), desc="Writing all but last stack...", ncols=75):
         this_stack_data = tifffile.imread(tif_fnames[i], is_ome=False)
         write_start_ind = write_end_ind
         write_end_ind = write_start_ind + stack_depth
         f_out[h5_key][write_start_ind:write_end_ind, :, :] = this_stack_data
-    
-    # Write the end of the file
-    # This will also require knowing if the last stack was at least 'offset' many pages.
+
+    # Write the last stack
     last_stack = tifffile.imread(tif_fnames[-1], is_ome=False)
     write_start_ind = write_end_ind
-    
+
     print('Writing last stack...')
-    f_out[h5_key][write_start_ind:-offset, :, :] = last_stack
-    f_out[h5_key][-offset:, :, :] = last_frames
+    if frame_offset:
+        f_out[h5_key][write_start_ind:-offset, :, :] = last_stack
+        f_out[h5_key][-offset:, :, :] = np.flip(last_frames, axis=0)
+    else:
+        f_out[h5_key][write_start_ind:write_start_ind + last_stack_length, :, :] = last_stack
 
     f_out.close()
