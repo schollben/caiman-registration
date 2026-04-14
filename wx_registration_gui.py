@@ -106,6 +106,7 @@ class CheckListFrame(wx.Frame):
 
 
 def get_registration_options():
+
     paths = DirectorySelection.get_directories()
     checklist_labels = ["TIFs->.H5", "First Rigid","Addl. Rigid", "NoRMCorre"]
     if not paths:

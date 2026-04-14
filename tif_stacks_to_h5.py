@@ -5,7 +5,7 @@ import numpy as np
 import h5py
 from tqdm import tqdm
 
-def tif_stacks_to_h5(tif_dir, h5_savename, h5_key='mov', delete_tiffs=False, frame_offset=False, offset=30):
+def tif_stacks_to_h5(tif_dir, h5_savename, h5_key='mov', delete_tiffs=False, frame_offset=False, offset=30, channel='Ch2'):
     '''
     Convert .tif stacks from BRUKER/SCANIMAGE to monolithic .h5 files.
     If frame_offset, frames from the start and end of the series are appended to either
@@ -19,11 +19,21 @@ def tif_stacks_to_h5(tif_dir, h5_savename, h5_key='mov', delete_tiffs=False, fra
             delete_tiffs (bool): Whether to remove .tif files during conversion
             frame_offset (bool): Whether to add frame offsets at beginning and end
             offset (int): how many frames to add at beginning and end if frame_offset is True
+            channel (str or None): Channel to select, e.g. 'Ch2'. Filters TIFFs whose
+                filename contains this string. Pass None to include all channels.
         Returns:
             None - Writes .h5 file to disk at 'h5_savename' containing calcium movie data.
     '''
-    #assert len(tif_fnames) > 0, "List of tifs to convert must be nonzero in length."
-    tif_fnames = sorted(glob(os.path.join(tif_dir, "*.tif")))
+    all_tifs = sorted(glob(os.path.join(tif_dir, "*.tif")))
+    if channel is not None:
+        tif_fnames = [f for f in all_tifs if f'_{channel}_' in os.path.basename(f)]
+    else:
+        tif_fnames = all_tifs
+    assert len(tif_fnames) > 0, f"No TIF files found in {tif_dir}" + (f" for channel '{channel}'" if channel else "") + "."
+    print(f"\nFound {len(tif_fnames)} TIFF stacks to write ({channel or 'all channels'}):")
+    for f in tif_fnames:
+        print(f"  {os.path.basename(f)}")
+    print()
     # Don't know how to get width, height without loading into memory.
     #first_tif_handle = tifffile.TiffFile(tif_fnames[0])
     #stack_depth = len(first_tif_handle.pages)
@@ -95,6 +105,7 @@ def tif_stacks_to_h5(tif_dir, h5_savename, h5_key='mov', delete_tiffs=False, fra
         write_end_ind += offset
 
     for i in tqdm(range(len(tif_fnames) - 1), desc="Writing all but last stack...", ncols=75):
+        print(f"  Writing [{i+1}/{len(tif_fnames)}]: {os.path.basename(tif_fnames[i])}")
         this_stack_data = tifffile.imread(tif_fnames[i], is_ome=False)
         write_start_ind = write_end_ind
         write_end_ind = write_start_ind + stack_depth
@@ -104,7 +115,7 @@ def tif_stacks_to_h5(tif_dir, h5_savename, h5_key='mov', delete_tiffs=False, fra
     last_stack = tifffile.imread(tif_fnames[-1], is_ome=False)
     write_start_ind = write_end_ind
 
-    print('Writing last stack...')
+    print(f"  Writing [{len(tif_fnames)}/{len(tif_fnames)}]: {os.path.basename(tif_fnames[-1])} (last stack)")
     if frame_offset:
         f_out[h5_key][write_start_ind:-offset, :, :] = last_stack
         f_out[h5_key][-offset:, :, :] = np.flip(last_frames, axis=0)
