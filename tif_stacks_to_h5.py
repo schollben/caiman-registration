@@ -26,7 +26,11 @@ def tif_stacks_to_h5(tif_dir, h5_savename, h5_key='mov', delete_tiffs=False, fra
     '''
     all_tifs = sorted(glob(os.path.join(tif_dir, "*.tif")))
     if channel is not None:
-        tif_fnames = [f for f in all_tifs if f'_{channel}_' in os.path.basename(f)]
+        has_channel_token = any('Ch' in os.path.basename(f) for f in all_tifs)
+        if has_channel_token:
+            tif_fnames = [f for f in all_tifs if f'_{channel}_' in os.path.basename(f)]
+        else:
+            tif_fnames = all_tifs
     else:
         tif_fnames = all_tifs
     assert len(tif_fnames) > 0, f"No TIF files found in {tif_dir}" + (f" for channel '{channel}'" if channel else "") + "."

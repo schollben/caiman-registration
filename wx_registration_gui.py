@@ -2,13 +2,12 @@ from os.path import basename, dirname,join
 import code
 import numpy as np
 import wx
-import os
 import wx.lib.agw.multidirdialog as MDD
 
 class DirectorySelection:
     def get_directories():
-        app = wx.App()
-        dlg = MDD.MultiDirDialog(None, "Pick your dirs", defaultPath=os.path.expanduser("~"), style=wx.DD_DEFAULT_STYLE | wx.DD_DIR_MUST_EXIST)
+        app = wx.App() 
+        dlg = MDD.MultiDirDialog(None, "Pick your dirs", defaultPath="/mnt/bigdata", style=wx.DD_DEFAULT_STYLE | wx.DD_DIR_MUST_EXIST)
         if dlg.ShowModal() == wx.ID_OK:
             paths = dlg.GetPaths()
         dlg.Destroy()
