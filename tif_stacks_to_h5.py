@@ -37,12 +37,11 @@ def tif_stacks_to_h5(tif_dir, h5_savename, h5_key='mov', delete_tiffs=False, fra
     # Don't know how to get width, height without loading into memory.
     #first_tif_handle = tifffile.TiffFile(tif_fnames[0])
     #stack_depth = len(first_tif_handle.pages)
-    first_tif = tifffile.imread(tif_fnames[0])
-    if len(first_tif.shape) < 3:
-        stack_depth = 1
-        stack_width, stack_height = first_tif.shape
-    else:
-        stack_depth, stack_width, stack_height = first_tif.shape
+    with tifffile.TiffFile(tif_fnames[0]) as tif:
+        stack_depth = len(tif.pages)
+        page = tif.pages[0]
+        stack_width, stack_height = page.shape[:2]
+
 
     # All multi-frame .tif stacks should be same size except for the last.
     # Quick check w/out loading into RAM.

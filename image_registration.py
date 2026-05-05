@@ -59,8 +59,9 @@ def register_one_session(parent_dir, mc_dict, keep_memmap, save_sample, sample_n
     for i in range(0, math.floor(numframes / 1000)):
         mov = cm.load(fnames_new[0])
         temp_data = np.array(mov[frames_written:frames_written + 1000, :, :])
-        datafile["mov"][frames_written:frames_written + 1000, :, :] = temp_data
-        frames_written += 1000
+        actual_frames = temp_data.shape[0]
+        datafile["mov"][frames_written:frames_written + actual_frames, :, :] = temp_data
+        frames_written += actual_frames
         del mov
     
     # handling last point
