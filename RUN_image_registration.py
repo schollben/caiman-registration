@@ -135,6 +135,11 @@ def register_bulk(sessions_to_run, process_selections):
         n_procs = 0
 
         if process_selections[0,i]:
+            for stale_h5 in ['unregistered.h5', 'registered.h5']:
+                stale_path = os.path.join(sessions_to_run[i], stale_h5)
+                if os.path.exists(stale_path):
+                    os.remove(stale_path)
+                    print(f"Deleted stale file: {stale_path}")
             h5_name = os.path.join(sessions_to_run[i], 'unregistered.h5')
             tif_stacks_to_h5(sessions_to_run[i], h5_name, frame_offset=False)
         
